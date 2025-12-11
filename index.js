@@ -7,7 +7,7 @@ const { scan, observe } = makeDomScanner((video) => new AdManager(video));
 
 const SDK = {
     init() {
-        console.log(`${LOG_PREFIX} Initializing...`);
+        console.log(`${LOG_PREFIX} Initializing SDK...`);
         scan();
         observe();
 

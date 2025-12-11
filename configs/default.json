@@ -1,0 +1,15 @@
+{
+  "adType": "lbar-bottom-right",
+  "autoRunDelay": 5,
+  "defaultContent": {
+    "rightHtml": "<img src=\"adobe.jpg\" style=\"width:100%; height:100%; object-fit:fill;\">",
+    "bottomHtml": "<img src=\"hubspot.png\" style=\"width:100%; height:100%; object-fit:fill;\">",
+    "overlayHtml": "<img src=\"hubspot.png\" style=\"width:50%; height:50%;\">",
+    "pipHtml": "<video src=\"https://www.w3schools.com/html/mov_bbb.mp4\" autoplay muted playsinline style=\"width:100%; height:100%; object-fit:cover;\"></video>",
+    "bannerVerticalHtml": "<img src=\"adobe.jpg\" style=\"width:100%; height:100%; object-fit:fill;\">",
+    "bannerHorizontalHtml": "<img src=\"hubspot.png\" style=\"width:100%; height:100%; object-fit:fill;\">",
+    "richmediaBackgroundHtml": "<div style=\"width:100%; height:100%; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); display:flex; justify-content:center; align-items:center; color:white; font-size:24px;\">Rich Media Ad</div>",
+    "richmediaForegroundHtml": "<video src=\"https://www.w3schools.com/html/mov_bbb.mp4\" autoplay muted playsinline style=\"width:100%; height:100%; object-fit:fill;\"></video>",
+    "duration": 10
+  }
+}

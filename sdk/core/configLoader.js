@@ -30,67 +30,43 @@ function buildUniversalAdSettings(apiData) {
 
   const chosenPosition = pickRandom(position);
 
-  const settings = {
+  return {
     adType: `${adType}-${chosenPosition}`,
     autoRunDelay: AdstartTime,
+
+    // ✅ IMPORTANT: FULL defaultContent
     defaultContent: {
+      rightHtml: adType === "lbar"
+        ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
+        : undefined,
+
+      bottomHtml: adType === "lbar"
+        ? renderAssetHtml(secondary, "width:100%; height:100%; object-fit:fill;")
+        : undefined,
+
+      overlayHtml: "",
+
+      pipHtml: adType === "pip"
+        ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:cover;")
+        : "",
+
+      bannerVerticalHtml: "",
+      bannerHorizontalHtml: adType === "banner"
+        ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
+        : "",
+
+      richmediaBackgroundHtml: adType === "richmedia"
+        ? renderAssetHtml(secondary, "width:100%; height:100%; object-fit:cover;")
+        : "",
+
+      richmediaForegroundHtml: adType === "richmedia"
+        ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
+        : "",
+
       duration: AdrunTime
     }
   };
-
-  /* =======================
-     L-BAR MAPPING
-     ======================= */
-  if (adType === "lbar") {
-    settings.defaultContent.rightHtml = renderAssetHtml(
-      primary,
-      "width:100%; height:100%; object-fit:fill;"
-    );
-
-    settings.defaultContent.bottomHtml = renderAssetHtml(
-      secondary,
-      "width:100%; height:100%; object-fit:fill;"
-    );
-  }
-
-  /* =======================
-     RICH MEDIA MAPPING
-     ======================= */
-  if (adType === "richmedia") {
-    settings.defaultContent.richmediaForegroundHtml = renderAssetHtml(
-      primary,
-      "width:100%; height:100%; object-fit:fill;"
-    );
-
-    settings.defaultContent.richmediaBackgroundHtml = renderAssetHtml(
-      secondary,
-      "width:100%; height:100%; object-fit:cover;"
-    );
-  }
-
-  /* =======================
-     BANNER
-     ======================= */
-  if (adType === "banner") {
-    settings.defaultContent.bannerHorizontalHtml = renderAssetHtml(
-      primary,
-      "width:100%; height:100%; object-fit:fill;"
-    );
-  }
-
-  /* =======================
-     PIP
-     ======================= */
-  if (adType === "pip") {
-    settings.defaultContent.pipHtml = renderAssetHtml(
-      primary,
-      "width:100%; height:100%; object-fit:cover;"
-    );
-  }
-
-  return settings;
 }
-
 
 export async function loadPublisherConfig() {
   const currentScript = document.currentScript;

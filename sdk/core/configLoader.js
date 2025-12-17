@@ -1,6 +1,9 @@
+import { CONFIG, DEFAULT_CONFIG } from "./utils.js";
+
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
+
 function renderAssetHtml(asset, style = "") {
   if (!asset) return "";
 
@@ -14,6 +17,7 @@ function renderAssetHtml(asset, style = "") {
 
   return "";
 }
+
 function buildUniversalAdSettings(apiData) {
   const {
     adType,
@@ -25,44 +29,35 @@ function buildUniversalAdSettings(apiData) {
 
   const assets = adsCreatives?.[0]?.assets || [];
 
-  const primary = assets.find(a => a.role === "primary");
-  const secondary = assets.find(a => a.role === "secondary");
+  const primary = assets.find((a) => a.role === "primary");
+  const secondary = assets.find((a) => a.role === "secondary");
 
   const chosenPosition = pickRandom(position);
 
   return {
     adType: `${adType}-${chosenPosition}`,
     autoRunDelay: AdstartTime,
-
-    // ✅ IMPORTANT: FULL defaultContent
     defaultContent: {
       rightHtml: adType === "lbar"
         ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
         : undefined,
-
       bottomHtml: adType === "lbar"
         ? renderAssetHtml(secondary, "width:100%; height:100%; object-fit:fill;")
         : undefined,
-
       overlayHtml: "",
-
       pipHtml: adType === "pip"
         ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:cover;")
         : "",
-
       bannerVerticalHtml: "",
       bannerHorizontalHtml: adType === "banner"
         ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
         : "",
-
       richmediaBackgroundHtml: adType === "richmedia"
         ? renderAssetHtml(secondary, "width:100%; height:100%; object-fit:cover;")
         : "",
-
       richmediaForegroundHtml: adType === "richmedia"
         ? renderAssetHtml(primary, "width:100%; height:100%; object-fit:fill;")
         : "",
-
       duration: AdrunTime
     }
   };
@@ -73,21 +68,18 @@ export async function loadPublisherConfig() {
 
   if (!currentScript) {
     console.warn("[UASDK] No <script> tag found.");
-    return {};
+    return CONFIG;
   }
+  console.log("currentScript", currentScript);
 
   const configKey = currentScript.getAttribute("data-config");
-    // const configKey ='cb35080709bf7ac80e2dc936319f34bab3af5014d6f004b1'
-
   if (!configKey) {
     console.warn("[UASDK] No data-config attribute found.");
-    return {};
+    return CONFIG;
   }
 
-  // 🔹 CHANGE THIS to your actual API base
   const API_BASE = "http://localhost:5000/";
-
-  const endpoint = `${API_BASE}api/configs/key/${encodeURIComponent('cb35080709bf7ac80e2dc936319f34bab3af5014d6f004b1')}`;
+  const endpoint = `${API_BASE}api/configs/key/${encodeURIComponent(configKey)}`;
 
   try {
     const response = await fetch(endpoint, {
@@ -102,20 +94,30 @@ export async function loadPublisherConfig() {
       throw new Error(`Config fetch failed (${response.status})`);
     }
 
-    // const config = await response.json();
     const apiConfig = await response.json();
-
     const universalSettings = buildUniversalAdSettings(apiConfig);
 
-    // window.UniversalAdSettings = universalSettings;
+    const mergedConfig = {
+      ...DEFAULT_CONFIG,
+      ...universalSettings,
+      defaultContent: {
+        ...DEFAULT_CONFIG.defaultContent,
+        ...(universalSettings.defaultContent || {})
+      }
+    };
 
-    console.log("[UASDK] UniversalAdSettings ready:", universalSettings);
+    Object.assign(CONFIG, mergedConfig);
+    window.UniversalAdSettings = CONFIG;
 
-    return universalSettings;
+    console.log("[UASDK] Loaded config:", CONFIG);
+    console.log("[UASDK] Applied timing:", {
+      autoRunDelay: CONFIG.autoRunDelay,
+      duration: CONFIG.defaultContent?.duration
+    });
+
+    return CONFIG;
   } catch (error) {
     console.error("[UASDK] Error loading config:", error);
-    return {};
+    return CONFIG;
   }
 }
-
-

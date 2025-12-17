@@ -92,7 +92,7 @@ function buildUniversalAdSettings(apiData) {
 }
 
 
-async function loadPublisherConfig() {
+export async function loadPublisherConfig() {
   const currentScript = document.currentScript;
 
   if (!currentScript) {
@@ -142,5 +142,4 @@ async function loadPublisherConfig() {
   }
 }
 
-// auto-load on script execution
-loadPublisherConfig();
+

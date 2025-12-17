@@ -89,16 +89,27 @@ export class AdManager {
         }
     }
 
-    setupAutoTrigger() {
+ setupAutoTrigger() {
+        const delay = Number(CONFIG.autoRunDelay) || 0;
         const onTimeUpdate = () => {
-            if (!this.hasAutoTriggered && this.video.currentTime > CONFIG.autoRunDelay) {
+            if (this.hasAutoTriggered) return;
+            if (this.video.currentTime >= delay) {
                 this.hasAutoTriggered = true;
-                console.log(`${LOG_PREFIX} Auto-triggering ad for`, this.video);
+                console.log(`${LOG_PREFIX} Auto-triggering ad for`, this.video, {
+                    currentTime: this.video.currentTime,
+                    autoRunDelay: delay,
+                    duration: CONFIG.defaultContent?.duration
+                });
                 this.showAd(CONFIG.defaultContent);
                 this.video.removeEventListener('timeupdate', onTimeUpdate);
+                this.video.removeEventListener('loadeddata', onTimeUpdate);
             }
         };
+
+        // Fire once immediately in case the video is already past the delay (or delay === 0).
+        onTimeUpdate();
         this.video.addEventListener('timeupdate', onTimeUpdate);
+        this.video.addEventListener('loadeddata', onTimeUpdate, { once: true });
     }
     handleEnterFullscreen() {
     if (!this.isAdShowing || !document.fullscreenElement) return;
